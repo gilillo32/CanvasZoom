@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Canvas. drawImage metodoaren adibideak</title>
+  </head>
+  <body>
+    <canvas id="oihala" width="800" height="500"></canvas>
+    <script>
+      var oihala = document.getElementById("oihala");
+      var context = oihala.getContext("2d");
+      var logo = new Image();
+      var currentPos = [5, 5];
+      var rectSize = 16;
+      logo.src = "irudiak/tiles.png";
+      // irudia memorian kargatzen denean oihalan idatziko dugu (ez lehenago)
+      logo.onload = function () {
+        // 3 paramtro (zer, non kokatu)
+        context.drawImage(logo, currentPos[0], currentPos[1]);
+        context.strokeStyle = "red";
+        context.lineWidth = 2;
+        context.strokeRect(currentPos[0], currentPos[1], rectSize, rectSize);
+        zoom();
+        document.addEventListener("keydown", (e) => {
+          e.preventDefault();
+          if (e.key == "ArrowRight") {
+            if (currentPos[0] >= logo.width - 16) {
+              alert("Out of bounds");
+            } else {
+              currentPos[0] += rectSize;
+              reloadImage();
+              drawRectangles();
+            }
+          } else if (e.key == "ArrowUp") {
+            if (currentPos[1] <= logo.y + 16) {
+              alert("Out of bounds");
+            } else {
+              currentPos[1] -= rectSize;
+              reloadImage();
+              drawRectangles();
+            }
+          } else if (e.key == "ArrowLeft") {
+            if (currentPos[0] <= logo.x + rectSize) {
+              alert("Out of bounds");
+            } else {
+              currentPos[0] -= rectSize;
+              reloadImage();
+              drawRectangles();
+            }
+          } else if (e.key == "ArrowDown") {
+            if (currentPos[1] >= logo.height - 16) {
+              alert("Out of bounds");
+            } else {
+              currentPos[1] += rectSize;
+              reloadImage();
+              drawRectangles();
+            }
+          }
+        });
+      };
+
+      function reloadImage() {
+        let pcontext = oihala.getContext("2d");
+        pcontext.clearRect(0, 0, oihala.width, oihala.height);
+        context.drawImage(logo, 5, 5);
+      }
+
+      function drawRectangles() {
+        context.strokeRect(currentPos[0], currentPos[1], rectSize, rectSize);
+        zoom();
+      }
+
+      function zoom() {
+        context.drawImage(
+          logo,
+          currentPos[0] - 5,
+          currentPos[1] - 5,
+          rectSize,
+          rectSize,
+          logo.width + 50,
+          50,
+          rectSize * 5,
+          rectSize * 5
+        );
+      }
+    </script>
+  </body>
+</html>
